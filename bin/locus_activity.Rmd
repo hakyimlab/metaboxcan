@@ -23,7 +23,7 @@ data = json.loads(gene_eqtls.text)
 if 'data' in data.keys():
   myqtl = pd.json_normalize(data['data'])
 else:
-  myqtl = pd.Dataframe()
+  myqtl = pd.DataFrame()
   print(f"Cannot find the singleTissueEqtl from multixcan({tissue}) for {gene_name} gene")
     
 if myqtl.empty:
