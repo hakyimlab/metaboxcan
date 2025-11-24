@@ -5,6 +5,7 @@ b_start = all_loci[all_loci$gene_name == best_gene,]$locus_start
 b_end = all_loci[all_loci$gene_name == best_gene,]$locus_end
 b_chr = all_loci[all_loci$gene_name == best_gene,]$chr
 b_gene_id = all_loci[all_loci$gene_name == best_gene,]$gene_id
+b_gene_name = all_loci[all_loci$gene_name == best_gene,]$gene_name
 b_gene_tissue = multixcan[multixcan$gene == b_gene_id,]$t_i_best
 ```
 
@@ -15,7 +16,7 @@ import pandas as pd
 
 b_df =pd.DataFrame() 
 gencode = r.b_gene_id
-gene_name = r.gene_name
+gene_name = r.b_gene_name
 tissue = r.b_gene_tissue
 gene_eqtls = requests.get('https://gtexportal.org/api/v2/association/singleTissueEqtl', 
                  params = {"gencodeId" : gencode,"tissueSiteDetailId" : tissue, "datasetId" : "gtex_v8"})
