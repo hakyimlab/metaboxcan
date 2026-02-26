@@ -1022,7 +1022,7 @@ ss <- top_selector(net.scores,m.network)
 # run analysis
 lc <- get_community(ss,m.network)
 n.edges <- plt_edges(ss,m.network)
-n.nodes <- plt_nodes(lc,net.scores,gene_info,met_info)
+n.nodes <- plt_nodes(lc,net.scores,gene_info,met_info,multixcan)
 nn = n.nodes %>% filter((id %in% n.edges$from) | (id %in% n.edges$to)) %>%
   group_by(id) %>% dplyr::slice(1) %>% ungroup()
 visNetwork(nn, n.edges) %>%

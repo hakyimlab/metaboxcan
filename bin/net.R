@@ -1,4 +1,5 @@
 #! /usr/bin/env Rscript
+set.seed(6767)
 # functions
 acat = function(pvec)
 {
@@ -51,7 +52,7 @@ plt_edges <- function(ss,m.network) {
 
 }
 
-plt_nodes <- function(lc,scores,gene_info,met_info){
+plt_nodes <- function(lc,scores,gene_info,met_info,multixcan){
   # get the nodes df
   lc_df <- data.frame(as.list(membership(lc))) %>% t() %>%
     data.frame() %>% setnames(., names(.), "group") %>%
@@ -67,6 +68,10 @@ plt_nodes <- function(lc,scores,gene_info,met_info){
                               SUPER_PATHWAY,SUB_PATHWAY,description,Metabolite.ID) %>%
                 mutate(COMP_ID = paste0("M", COMP_ID)),
               by = c("label" = "Metabolite.ID")) %>%
+    left_join(multixcan %>% dplyr::select(gene,gene_name) %>% 
+                dplyr::mutate(gene = gsub("\\..*","",gene)),
+              by = c("label" = "gene")) %>% 
+    dplyr::mutate(preferred_name = ifelse((is.na(preferred_name) & !is.na(gene_name)), gene_name, preferred_name)) %>% 
     dplyr::mutate(name = ifelse(is.na(Compound_name),preferred_name,Compound_name)) %>%
     dplyr::mutate(name = ifelse(is.na(name),label,name)) %>%
     dplyr::mutate(name = ifelse(startsWith(name,"ENSG0"),"",name)) %>%
@@ -85,17 +90,18 @@ plt_nodes <- function(lc,scores,gene_info,met_info){
                          ifelse(desc == "",glue::glue("SUB CLASS: {sub_class}"),
                          glue::glue("{desc}<br>SUB CLASS: {sub_class}")),desc)) %>%
     dplyr::mutate(desc = ifelse(desc == "" & !str_starts(label, "ENSG0"),
-                         glue::glue("ID: {label}<br>name: {name}"),desc)) %>%
+                         glue::glue("name: {name}"),desc)) %>%
     dplyr::mutate(desc = ifelse(!is.na(description) & description != "",
                          ifelse(desc == "",description,
                          glue::glue("{desc}<br>{description}")),desc)) %>%
     dplyr::mutate(desc = ifelse(desc == "",annotation,desc)) %>%
+    dplyr::mutate(desc = glue::glue("ID: {label}<br>{desc}")) %>%
     dplyr::mutate(shape = ifelse(!startsWith(label,"ENSG0"), "square","dot")) %>%
     mutate(shadow = ifelse(b_sig == "yes", TRUE,FALSE)) %>%
     mutate(p2 = format(pvalue,scientific = T, digits = 2)) %>%
     mutate(desc = glue::glue("<p style='color: black; font-size: 10px;
                              font-family: Tahoma, sans-serif;
-                             '><b>p: {p2}, sig: {b_sig}</b><br>{desc}</p>")) %>%
+                             '><b>p-value: {p2}, BF sig: {b_sig}</b><br>{desc}</p>")) %>%
     #filter((label %in% n.edges$from) | (label %in% n.edges$to)) %>%
     dplyr::rename(id=label,label=name,title = desc) %>%
     dplyr::select(id,label,value,group,shape,title,shadow,pvalue,zscore)
