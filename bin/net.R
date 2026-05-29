@@ -1,5 +1,5 @@
 #! /usr/bin/env Rscript
-set.seed(6767)
+set.seed(949340)
 # functions
 acat = function(pvec)
 {
