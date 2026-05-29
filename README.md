@@ -1,5 +1,7 @@
 ## MetaboXcan workflow
-This is a pipeline used to run the MetaboXcan reports where we look at the association of metabolites and genes to complex traits.
+This is a pipeline used to perform associations between genes, metabolites and complex traits to generate MetaboXcan reports.
+
+![](bin/metabo_workflow.png)
 
 ### Env set up
 You can install the environment required to execute metaboxcan using the [`env.yaml`](./env/env.yaml) file provided in this repository
